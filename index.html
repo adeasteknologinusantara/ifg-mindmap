@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Peta Komunikasi IFG 2026 — Alika Communication</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-  background: #f7f5f0;
+  background: #f5f4f0;
   overflow: hidden;
   width: 100vw; height: 100vh;
   -webkit-user-select: none; user-select: none;
@@ -19,71 +19,102 @@ body {
 #canvas.dragging { cursor: grabbing; }
 #svg-root { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; }
 .bubble { cursor: pointer; }
-.bubble circle { transition: r .35s cubic-bezier(.34,1.56,.64,1); filter: drop-shadow(0 2px 8px rgba(0,0,0,.10)); }
-.bubble:hover circle { filter: drop-shadow(0 4px 16px rgba(0,0,0,.20)); }
+.bubble circle {
+  transition: r .38s cubic-bezier(.34,1.56,.64,1);
+  filter: drop-shadow(0 3px 10px rgba(0,0,0,.11));
+}
+.bubble:hover circle { filter: drop-shadow(0 5px 20px rgba(0,0,0,.22)); }
 .bubble text { pointer-events: none; }
+
+/* ── Detail panel ── */
 #panel {
-  position: fixed; right: 0; top: 0; bottom: 0; width: 320px;
-  background: #fff; border-left: 1px solid #e5e2da;
+  position: fixed; right: 0; top: 0; bottom: 0; width: 350px;
+  background: #fff; border-left: 1px solid #e0ddd6;
   transform: translateX(100%);
   transition: transform .3s cubic-bezier(.4,0,.2,1);
-  z-index: 200; overflow-y: auto; padding: 28px 24px;
-  box-shadow: -4px 0 24px rgba(0,0,0,.07);
+  z-index: 200; overflow-y: auto; padding: 32px 26px 40px;
+  box-shadow: -4px 0 28px rgba(0,0,0,.09);
 }
 #panel.open { transform: translateX(0); }
 #panel .p-close {
-  position: absolute; top: 16px; right: 16px;
+  position: absolute; top: 18px; right: 18px;
   background: #f0ede6; border: none; border-radius: 50%;
-  width: 28px; height: 28px; cursor: pointer; font-size: 13px;
-  color: #888; display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; cursor: pointer; font-size: 14px;
+  color: #666; display: flex; align-items: center; justify-content: center;
 }
-#panel .p-close:hover { background: #e0ddd6; color: #333; }
+#panel .p-close:hover { background: #e0ddd6; color: #111; }
+
+/* Tag pill */
 .p-tag {
   display: inline-block; font-size: 9px; font-weight: 700;
-  letter-spacing: .8px; text-transform: uppercase;
-  padding: 3px 8px; border-radius: 3px; margin-bottom: 12px;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 4px; margin-bottom: 14px;
 }
-.p-title { font-size: 17px; font-weight: 700; color: #1a1a1a; line-height: 1.3; margin-bottom: 4px; }
-.p-sub { font-size: 11px; color: #999; margin-bottom: 18px; }
+/* Title — large & bold */
+.p-title {
+  font-size: 20px; font-weight: 800; color: #111;
+  line-height: 1.25; margin-bottom: 8px;
+}
+/* Sub-title — clearly distinct: medium size, colored, slightly bold */
+.p-sub {
+  font-size: 13px; font-weight: 600; color: #555;
+  margin-bottom: 22px; line-height: 1.5;
+  padding-bottom: 16px; border-bottom: 2px solid #f0ede6;
+}
+/* Section label */
 .p-sec-label {
-  font-size: 9px; font-weight: 700; letter-spacing: .8px;
-  text-transform: uppercase; color: #bbb; margin-bottom: 7px; margin-top: 16px;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: #bbb;
+  margin-bottom: 8px; margin-top: 20px;
 }
-.p-item { font-size: 12px; color: #444; line-height: 1.65; padding: 5px 0; border-bottom: 1px solid #f0ede6; }
+/* Body items — smaller & lighter than p-sub */
+.p-item {
+  font-size: 12.5px; font-weight: 400; color: #444;
+  line-height: 1.7; padding: 5px 0;
+  border-bottom: 1px solid #f0ede6;
+}
 .p-item:last-child { border-bottom: none; }
+
+/* ── Controls ── */
 #controls {
-  position: fixed; bottom: 20px; right: 20px;
-  display: flex; flex-direction: column; gap: 6px; z-index: 100;
+  position: fixed; bottom: 22px; right: 22px;
+  display: flex; flex-direction: column; gap: 7px; z-index: 100;
 }
 .ctrl {
-  width: 36px; height: 36px; border-radius: 8px;
-  background: #fff; border: 1px solid #e0ddd6;
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  cursor: pointer; font-size: 18px; color: #555;
+  width: 38px; height: 38px; border-radius: 10px;
+  background: #fff; border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0,0,0,.09);
+  cursor: pointer; font-size: 20px; color: #444;
   display: flex; align-items: center; justify-content: center;
   transition: background .15s;
 }
-.ctrl:hover { background: #f0ede6; color: #222; }
-#header { position: fixed; top: 20px; left: 20px; z-index: 100; }
-#header .h-title { font-size: 13px; font-weight: 700; color: #c0392b; letter-spacing: .2px; }
-#header .h-sub { font-size: 10px; color: #aaa; margin-top: 2px; }
+.ctrl:hover { background: #f0ede6; color: #111; }
+
+/* ── Header ── */
+#header { position: fixed; top: 22px; left: 22px; z-index: 100; }
+#header .h-title { font-size: 14px; font-weight: 700; color: #c0392b; }
+#header .h-sub { font-size: 10px; color: #bbb; margin-top: 3px; }
+
+/* ── Legend ── */
 #legend {
-  position: fixed; bottom: 20px; left: 20px; z-index: 100;
-  background: #fff; border: 1px solid #e5e2da; border-radius: 8px;
-  padding: 10px 14px; box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  position: fixed; bottom: 22px; left: 22px; z-index: 100;
+  background: #fff; border: 1px solid #e0ddd6; border-radius: 10px;
+  padding: 12px 16px; box-shadow: 0 2px 10px rgba(0,0,0,.07);
 }
-.leg { display: flex; align-items: center; gap: 8px; font-size: 10px; color: #888; margin-bottom: 4px; }
+.leg { display: flex; align-items: center; gap: 9px; font-size: 10.5px; color: #444; margin-bottom: 5px; }
 .leg:last-child { margin-bottom: 0; }
-.leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.leg-dot { width: 13px; height: 13px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,.08); }
+
+/* ── Hint ── */
 #hint {
-  position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-  background: #fff; border: 1px solid #e5e2da; border-radius: 20px;
-  padding: 5px 16px; font-size: 10px; color: #aaa;
-  box-shadow: 0 2px 8px rgba(0,0,0,.06); pointer-events: none; z-index: 100;
+  position: fixed; top: 22px; left: 50%; transform: translateX(-50%);
+  background: #fff; border: 1px solid #e0ddd6; border-radius: 20px;
+  padding: 6px 18px; font-size: 10.5px; color: #aaa;
+  box-shadow: 0 2px 8px rgba(0,0,0,.07); pointer-events: none; z-index: 100;
 }
-#updated {
-  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-  font-size: 9px; color: #ccc; z-index: 100;
+#foot {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; color: #ccc; z-index: 100; white-space: nowrap;
 }
 </style>
 </head>
@@ -91,7 +122,7 @@ body {
 
 <div id="header">
   <div class="h-title">Peta Komunikasi IFG 2026</div>
-  <div class="h-sub">Alika Communication · Konfidensial · v1.0 Sep 2026</div>
+  <div class="h-sub">Alika Communication · Konfidensial · v1.2 Sep 2026</div>
 </div>
 <div id="hint">Scroll untuk zoom · Drag untuk geser · Klik bubble untuk detail & expand</div>
 
@@ -116,345 +147,413 @@ body {
 </div>
 
 <div id="legend">
-  <div class="leg"><div class="leg-dot" style="background:#c0392b"></div>IFG Holding</div>
-  <div class="leg"><div class="leg-dot" style="background:#d97706"></div>Astagina</div>
-  <div class="leg"><div class="leg-dot" style="background:#2563eb"></div>BAU</div>
-  <div class="leg"><div class="leg-dot" style="background:#16a34a"></div>Aksi Alika</div>
-  <div class="leg"><div class="leg-dot" style="background:#7c3aed"></div>Stakeholder</div>
+  <div class="leg"><div class="leg-dot" style="background:#f4a7b9"></div>IFG Holding</div>
+  <div class="leg"><div class="leg-dot" style="background:#7ec8c8"></div>Danantara (Principal)</div>
+  <div class="leg"><div class="leg-dot" style="background:#c8a4d4"></div>Astagina</div>
+  <div class="leg"><div class="leg-dot" style="background:#a8c5e8"></div>BAU</div>
+  <div class="leg"><div class="leg-dot" style="background:#d4c5a9"></div>Aksi Alika</div>
+  <div class="leg"><div class="leg-dot" style="background:#a8d5b5"></div>Stakeholders</div>
 </div>
 
-<div id="updated">Data per September 2026 · Akan diperbarui pasca-kickoff</div>
+<div id="foot">Data per September 2026 · Akan diperbarui pasca-kickoff</div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// DATA — UPDATE THIS SECTION TO UPDATE THE MAP
-// Format: { id, label, sub, r, fill, textFill, stroke, strokeW,
-//           dashed(optional), detail:{tag,tagColor,tagBg,title,sub,sections:[{label,items:[]}]},
-//           children:[...] }
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// DATA
+// No sub-label in bubble — only in detail panel
+// ═══════════════════════════════════════════════════════════
 const TREE = {
-  id:'ifg', label:'IFG', sub:'Indonesia Financial Group', r:66, fill:'#c0392b', textFill:'#fff', stroke:'#922b21', strokeW:3,
-  detail:{tag:'HOLDING INDUK',tagColor:'#922b21',tagBg:'#fdecea',title:'Indonesia Financial Group (IFG)',sub:'PT Bahana Pembinaan Usaha Indonesia (Persero)',sections:[
-    {label:'Status & Mandat',items:['Holding BUMN asuransi, penjaminan, dan investasi','Dibentuk berdasarkan PP No. 20 Tahun 2020','Di bawah pengelolaan Danantara Indonesia (100% Pemerintah RI)','Koordinator pelaksanaan konsolidasi Astagina']},
-    {label:'Manajemen',items:['Direktur Utama: Hexana Tri Sasongko','Komisaris Utama: Fauzi Ichsan']},
-    {label:'Isu Strategis',items:['Legacy Jiwasraya via IFG Life','12 sub-proyek konsolidasi simultan','Risiko resistensi serikat pekerja — zero PHK','Negosiasi mitra asing AXA · FWD · Sumitomo']}
-  ]},
+  id:'ifg', label:'IFG', r:84,
+  fill:'#f4a7b9', stroke:'#e080a0', strokeW:3, textFill:'#1a1a1a',
+  detail:{
+    tag:'HOLDING INDUK', tagColor:'#c0392b', tagBg:'#fdecea',
+    title:'Indonesia Financial Group (IFG)',
+    sub:'PT Bahana Pembinaan Usaha Indonesia (Persero) — Holding BUMN Asuransi, Penjaminan & Investasi',
+    sections:[
+      {label:'Status & Mandat', items:['Holding BUMN asuransi, penjaminan, dan investasi','Dibentuk berdasarkan PP No. 20 Tahun 2020','Di bawah pengelolaan Danantara Indonesia (100% Pemerintah RI)','Koordinator pelaksanaan konsolidasi Astagina']},
+      {label:'Manajemen', items:['Direktur Utama: Hexana Tri Sasongko','Komisaris Utama: Fauzi Ichsan']},
+      {label:'Isu Strategis', items:['Legacy Jiwasraya via IFG Life','12 sub-proyek konsolidasi simultan','Risiko resistensi serikat pekerja — zero PHK','Negosiasi mitra asing AXA · FWD · Sumitomo']}
+    ]
+  },
   children:[
-    {id:'danantara',label:'Danantara',sub:'Principal · Mandat',r:42,fill:'#78350f',textFill:'#fef3c7',stroke:'#92400e',strokeW:1.5,dashed:true,
-     detail:{tag:'MANDAT EKSTERNAL',tagColor:'#92400e',tagBg:'#fffbeb',title:'Danantara Indonesia',sub:'Pemegang Saham Efektif IFG',sections:[
-       {label:'Peran',items:['Pemegang saham efektif IFG sejak 2025','Inisiator seluruh agenda konsolidasi Astagina','Pemberi mandat kampanye #MelayaniSepenuhHati','Target pangkas entitas BUMN: 1.043 → ±300']},
-       {label:'Kontak Komunikasi',items:['Delvi Sinambela — VP Communication','communications@danantaraindonesia.com']},
-       {label:'Catatan',items:['Arahan komunikasi Danantara bersifat wajib bagi IFG','Brand guidelines alignment adalah mandat, bukan pilihan','Semua narasi IFG harus selaras dengan narasi Danantara']}
-     ]}
+
+    // ── DANANTARA — soft teal, far top-right
+    {
+      id:'danantara', label:'Danantara\nIndonesia', r:62,
+      fill:'#7ec8c8', stroke:'#50a8a8', strokeW:2, textFill:'#1a1a1a', dashed:true,
+      detail:{
+        tag:'PRINCIPAL', tagColor:'#0a6060', tagBg:'#e8f8f8',
+        title:'Danantara Indonesia',
+        sub:'Pemegang Saham Efektif IFG & Pemberi Mandat Seluruh Agenda Transformasi',
+        sections:[
+          {label:'Peran sebagai Principal', items:['Pemegang saham efektif IFG sejak 2025','Inisiator & penentu arah seluruh agenda konsolidasi Astagina','Pemberi mandat kampanye #MelayaniSepenuhHati (wajib)','Target pemangkasan entitas BUMN: 1.043 → ±300','Semua narasi IFG harus selaras dengan arahan Danantara']},
+          {label:'Isu Danantara ↔ IFG', items:['Tekanan percepatan konsolidasi vs. kesiapan kajian independen','Mandat Astagina yang ambisius vs. kompleksitas hukum & negosiasi mitra asing','PMN yang dikucurkan ke IFG Life — pertanggungjawaban ke Danantara','Brand guidelines alignment — IFG harus konsisten dengan ekosistem Danantara']},
+          {label:'Kontak Komunikasi', items:['Delvi Sinambela — VP Communication','communications@danantaraindonesia.com']}
+        ]
+      }
     },
-    {id:'astagina',label:'ASTAGINA',sub:'Konsolidasi · 8 End-State',r:58,fill:'#d97706',textFill:'#fff',stroke:'#b45309',strokeW:2.5,
-     detail:{tag:'PROYEK STRATEGIS',tagColor:'#92400e',tagBg:'#fffbeb',title:'Project Astagina',sub:'Konsolidasi & Streamlining Asuransi & Penjaminan BUMN',sections:[
-       {label:'Target End-State',items:['8 entitas dari puluhan perusahaan asuransi BUMN','Timeline: bertahap 2026 – awal 2027','OJK terima 5 rencana konsolidasi dari IFG (Juni 2026)','Kajian konsultan independen masih berlangsung']},
-       {label:'12 Sub-Proyek (Kode Kota)',items:['Hamburg · Milan · Brussels · Muscat · Cairo · Dubai','Madrid · Denver · Florence · Paris · Phoenix · Salzburg','Masing-masing memiliki PMO dan tim komunikasi sendiri']},
-       {label:'Komplikasi Utama',items:['Mitra asing: AXA (49%) · FWD (44%) · Sumitomo (40%)','Entitas TBK: BRI · BNI · Bank Mandiri — butuh RUPSLB','Spin-off syariah wajib sebelum Desember 2026 (POJK 23/2023)']}
-     ]},
-     children:[
-       {id:'es1',label:'Asuransi Umum\nKonvensional',sub:'Jasindo · JRP · Tugu',r:40,fill:'#b45309',textFill:'#fff',stroke:'#92400e',strokeW:1.5,
-        detail:{tag:'END-STATE 1',tagColor:'#92400e',tagBg:'#fffbeb',title:'Asuransi Umum Konvensional',sub:'Surviving Entity: Jasindo (kandidat kuat)',sections:[
-          {label:'Entitas yang Masuk',items:['Jasindo — Surviving Entity kandidat kuat','Jasaraharja Putera (JRP) — anak Jasa Raharja 93,8%','Tugu Insurance (Pertamina 58,5%) — akuisisi TBK','Asei (Indonesia Re 99,9%) — konsolidasi lokal','PLN Insurance (PLN 80%) — konsolidasi lokal','Tri Pakarta/TRIPA (Dapen BNI 63%, Aswata 25%)','BRI Insurance/BRINS (BRI 90%) — akuisisi TBK']},
-          {label:'Isu Utama',items:['Jasindo: korupsi komisi agen SKK Migas & Pelni','JRP: penggeledahan KPK terkait proyek PT INTI','Tugu: kuorum RUPS 75% dengan mitra UOB & Samsung','TRIPA: hak suara 25% swasta Aswata','BRINS: spin-off syariah deadline 2026','Brand confusion: nama surviving entity belum final']},
-          {label:'Sub-Proyek Astagina',items:['Brussels (Konsolidasi Asum Umum Konvensional)','Madrid (Akuisisi Asum Umum Non-TBK)','Denver (Akuisisi Asum Umum TBK + Danantara Ecosystem)']}
-        ]}
-       },
-       {id:'es2',label:'Asuransi Umum\nSyariah',sub:'Jasindo Syariah · UUS',r:34,fill:'#b45309',textFill:'#fff',stroke:'#92400e',strokeW:1.5,
-        detail:{tag:'END-STATE 2',tagColor:'#92400e',tagBg:'#fffbeb',title:'Asuransi Umum Syariah',sub:'Surviving Entity: Jasindo Syariah',sections:[
-          {label:'Entitas yang Masuk',items:['Jasindo Syariah — Surviving Entity','UUS JRP Insurance — spin-off masuk sini','Potensi UUS lain yang wajib pisah per POJK 23/2023']},
-          {label:'Isu Utama',items:['Modal minimum POJK 23/2023 — deadline 2026 & 2028','Kepatuhan fatwa DSN-MUI untuk semua produk','Pengelolaan dana tabarru terpisah & transparan','Jasindo Syariah & Askrindo Syariah sudah MoU Nov 2025']},
-          {label:'Sub-Proyek Astagina',items:['Cairo (Akuisisi & Konsolidasi UUS Asuransi Umum Syariah)']}
-        ]}
-       },
-       {id:'es3',label:'Asuransi Jiwa\nKonvensional',sub:'IFG Life · BRI Life · BNI Life',r:42,fill:'#b45309',textFill:'#fff',stroke:'#92400e',strokeW:1.5,
-        detail:{tag:'END-STATE 3',tagColor:'#92400e',tagBg:'#fffbeb',title:'Asuransi Jiwa Konvensional',sub:'Surviving Entity: IFG Life',sections:[
-          {label:'Entitas yang Masuk',items:['IFG Life — Surviving Entity kuat (Aset Rp 32,84 T · RBC 180%)','Mandiri Inhealth (IFG Life 80%, Mandiri 20%) — integrasi','BRI Life (BRI 51%, FWD 44%) — akuisisi JV sensitif','BNI Life (BNI 60%, Sumitomo 40%) — akuisisi JV','AXA Mandiri (Mandiri 51%, AXA 49%) — akuisisi JV paling sensitif','Taspen Life (Taspen 99,97%) — konsolidasi lokal','PertaLife (Dapen Pertamina 71,4%) — konsolidasi lokal']},
-          {label:'Isu Kritis',items:['IFG Life: masih menanggung liabilitas polis Jiwasraya','BRI Life: hak suara 44% FWD Group — negosiasi bilateral','BNI Life: persetujuan 40% Sumitomo · spin-off syariah Des 2026','AXA Mandiri: hak veto 49% AXA & isu mis-selling PAYDI','Taspen Life: reputasi rusak pasca korupsi MTN fiktif Rp133 M','Mandiri Inhealth: inflasi biaya medis faskes rujukan']},
-          {label:'Sub-Proyek Astagina',items:['Hamburg (Konsolidasi Asuransi Jiwa Konvensional)','Florence (Akuisisi Asuransi Jiwa Non-JV)','Paris (Akuisisi Asuransi Jiwa JV)','Phoenix (Konsolidasi Jiwa IFG + Ekosistem Danantara)']}
-        ]}
-       },
-       {id:'es4',label:'Asuransi Jiwa\nSyariah',sub:'TBD — belum final',r:30,fill:'#d97706',textFill:'#fff',stroke:'#b45309',strokeW:1.5,dashed:true,
-        detail:{tag:'END-STATE 4 — TBD',tagColor:'#b45309',tagBg:'#fffbeb',title:'Asuransi Jiwa Syariah',sub:'Status: paling belum jelas dari semua end-state',sections:[
-          {label:'Opsi Pembentukan',items:['Spin-off unit syariah IFG Life (jika unit cukup besar)','Merger entitas jiwa syariah BUMN perbankan','Pembentukan entitas baru dari gabungan UUS']},
-          {label:'Isu',items:['Wajib ada sesuai POJK 23/2023 — tidak bisa digabung konvensional','BNI Life: persiapan spin-off UUS sebelum Desember 2026','BRI Life: komponen syariah perlu dipetakan']},
-          {label:'Sub-Proyek Astagina',items:['Dubai (Akuisisi & Konsolidasi UUS Asuransi Jiwa Syariah)','Muscat (Akuisisi Asuransi Jiwa Syariah)']}
-        ]}
-       },
-       {id:'es5',label:'Penjaminan\nKonvensional',sub:'Jamkrindo · Askrindo',r:36,fill:'#b45309',textFill:'#fff',stroke:'#92400e',strokeW:1.5,
-        detail:{tag:'END-STATE 5',tagColor:'#92400e',tagBg:'#fffbeb',title:'Penjaminan Konvensional',sub:'Surviving Entity: Jamkrindo',sections:[
-          {label:'Entitas yang Masuk',items:['Jamkrindo — Surviving Entity','Askrindo — merger ke Jamkrindo']},
-          {label:'Isu Utama',items:['Jamkrindo: lonjakan klaim KUR pasca-relaksasi Covid & PSAK 117','Askrindo: korupsi PT AMU (2016–2020), kerugian negara Rp604,6 M','Duplikasi fungsi — keduanya punya produk KUR','Proses paling straightforward: sesama IFG, non-TBK, tanpa mitra asing']},
-          {label:'Sub-Proyek Astagina',items:['Milan (Konsolidasi Penjaminan Konvensional — Tahap 1)']}
-        ]}
-       },
-       {id:'es6',label:'Penjaminan\nSyariah',sub:'JamSyar · AskSyar',r:34,fill:'#b45309',textFill:'#fff',stroke:'#92400e',strokeW:1.5,
-        detail:{tag:'END-STATE 6',tagColor:'#92400e',tagBg:'#fffbeb',title:'Penjaminan Syariah',sub:'Surviving Entity: Jamkrindo Syariah',sections:[
-          {label:'Entitas yang Masuk',items:['Jamkrindo Syariah — Surviving Entity','Askrindo Syariah — merger (market leader KUR Syariah 62,49%)']},
-          {label:'Isu Utama',items:['Askrindo Syariah: sengketa klaim bandara & pembatasan peran jubir','Jamkrindo Syariah: ketergantungan ekosistem pembiayaan Bank BSI','Brand equity Askrindo Syariah sangat kuat — perlu dijaga pasca-merger']},
-          {label:'Sub-Proyek Astagina',items:['Milan (track syariah — Penjaminan Syariah)']}
-        ]}
-       },
-       {id:'es7',label:'Jasa Raharja\n(UU 33/34)',sub:'Standalone · Tidak merger',r:36,fill:'#16a34a',textFill:'#fff',stroke:'#15803d',strokeW:2,
-        detail:{tag:'END-STATE 7 — STANDALONE',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Jasa Raharja',sub:'Tidak dikonsolidasi — mandat UU 33 & UU 34',sections:[
-          {label:'Status',items:['TIDAK masuk konsolidasi — tetap berdiri sendiri','UU No. 33/1964: santunan kecelakaan penumpang angkutan umum','UU No. 34/1964: santunan kecelakaan lalu lintas jalan','Dana dari iuran wajib STNK & tiket — bukan premi komersial']},
-          {label:'Yang Terdampak',items:['Jasaraharja Putera (JRP) — anak usaha Jasa Raharja (93,8%)','JRP AKAN dimerger ke End-State 1 (Asum Umum Konvensional)']},
-          {label:'Isu Komunikasi',items:['Kebingungan publik: "apakah Jasa Raharja ikut merger?"','Jawaban tegas: TIDAK. Layanan santunan kecelakaan tidak berubah','JRP berpisah dari Jasa Raharja untuk bergabung ke ES-1']}
-        ]}
-       },
-       {id:'es8',label:'Entitas\nPenunjang',sub:'Indonesia Re · TBD',r:30,fill:'#d97706',textFill:'#fff',stroke:'#b45309',strokeW:1.5,dashed:true,
-        detail:{tag:'END-STATE 8 — TBD',tagColor:'#b45309',tagBg:'#fffbeb',title:'Entitas Penunjang Asuransi',sub:'Status: paling ambigu — TBD',sections:[
-          {label:'Kandidat yang Masuk',items:['Indonesia Re / Nasional Re (reasuransi)','Bahana Group sebagai Shared Service Center (IDC & SSC)','Grahaniaga Tatautama (manajemen properti IFG)','FitAja! Digital (Mandiri Inhealth 45,1%)','AdMedika (TelkomMetra 99,9%) — target akuisisi TPA terpadu']},
-          {label:'Isu',items:['OJK per Juni 2026 belum terima rencana konsolidasi reasuransi','Bahana Group: harmonisasi arsitektur IT terpadu multi-anak BUMN','AdMedika: kepatuhan UU PDP proteksi data medis pasien']},
-          {label:'Sub-Proyek Astagina',items:['Salzburg (Akuisisi Entitas Pendukung Operasional Asuransi)']}
-        ]}
-       }
-     ]
+
+    // ── ASTAGINA
+    {
+      id:'astagina', label:'ASTAGINA', r:76,
+      fill:'#c8a4d4', stroke:'#a870c0', strokeW:2.5, textFill:'#1a1a1a',
+      detail:{
+        tag:'PROYEK STRATEGIS', tagColor:'#7b3fa0', tagBg:'#f5eefa',
+        title:'Project Astagina',
+        sub:'Konsolidasi & Streamlining Asuransi & Penjaminan BUMN — Target 8 End-State Entitas',
+        sections:[
+          {label:'Target End-State', items:['8 entitas dari puluhan perusahaan asuransi BUMN','Timeline: bertahap 2026 – awal 2027','OJK terima 5 rencana konsolidasi dari IFG (Juni 2026)','Kajian konsultan independen masih berlangsung per Sep 2026']},
+          {label:'12 Sub-Proyek (Kode Kota)', items:['Hamburg · Milan · Brussels · Muscat · Cairo · Dubai','Madrid · Denver · Florence · Paris · Phoenix · Salzburg','Masing-masing memiliki PMO dan tim komunikasi sendiri (Tim Cobra)']},
+          {label:'Komplikasi Utama', items:['Mitra asing: AXA (49%) · FWD (44%) · Sumitomo (40%)','Entitas TBK: BRI · BNI · Bank Mandiri — butuh RUPSLB + disclosure BEI','Spin-off syariah wajib sebelum Desember 2026 (POJK 23/2023)']}
+        ]
+      },
+      children:[
+        {id:'es1', label:'Asuransi Umum\nKonvensional', r:52,
+         fill:'#f0c080', stroke:'#d4a040', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 1',tagColor:'#8a5a00',tagBg:'#fff8e8',
+           title:'Asuransi Umum Konvensional',
+           sub:'Surviving Entity: Jasindo (kandidat kuat) — Sub-Proyek: Brussels · Madrid · Denver',
+           sections:[
+             {label:'Entitas yang Masuk',items:['Jasindo — Surviving Entity kandidat kuat','Jasaraharja Putera (JRP) — anak Jasa Raharja 93,8%','Tugu Insurance (Pertamina 58,5%) — akuisisi TBK','Asei (Indonesia Re 99,9%)','PLN Insurance (PLN 80%)','Tri Pakarta/TRIPA (Dapen BNI 63%, Aswata 25%)','BRI Insurance/BRINS (BRI 90%)']},
+             {label:'Isu Utama',items:['Jasindo: korupsi komisi agen SKK Migas & Pelni','JRP: penggeledahan KPK terkait proyek PT INTI','Tugu: kuorum RUPS 75% dengan mitra UOB & Samsung','TRIPA: hak suara 25% swasta Aswata','BRINS: spin-off syariah deadline 2026','Brand confusion: nama surviving entity belum final']}
+           ]}
+        },
+        {id:'es2', label:'Asuransi Umum\nSyariah', r:44,
+         fill:'#c8b4e0', stroke:'#9a7abf', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 2',tagColor:'#5a3a8a',tagBg:'#f5f0ff',
+           title:'Asuransi Umum Syariah',
+           sub:'Surviving Entity: Jasindo Syariah — Sub-Proyek: Cairo',
+           sections:[
+             {label:'Entitas yang Masuk',items:['Jasindo Syariah — Surviving Entity','UUS JRP Insurance — spin-off masuk sini','Potensi UUS lain yang wajib pisah per POJK 23/2023']},
+             {label:'Isu',items:['Modal minimum POJK 23/2023 — deadline 2026 & 2028','Kepatuhan fatwa DSN-MUI untuk semua produk','Jasindo Syariah & Askrindo Syariah sudah MoU Nov 2025']}
+           ]}
+        },
+        {id:'es3', label:'Asuransi Jiwa\nKonvensional', r:54,
+         fill:'#f0a0a0', stroke:'#d06060', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 3',tagColor:'#8a1a1a',tagBg:'#fff0f0',
+           title:'Asuransi Jiwa Konvensional',
+           sub:'Surviving Entity: IFG Life — Sub-Proyek: Hamburg · Florence · Paris · Phoenix',
+           sections:[
+             {label:'Entitas yang Masuk',items:['IFG Life — Surviving Entity (Aset Rp 32,84 T · RBC 180%)','Mandiri Inhealth (IFG Life 80%, Mandiri 20%)','BRI Life (BRI 51%, FWD 44%) — JV sensitif','BNI Life (BNI 60%, Sumitomo 40%) — JV','AXA Mandiri (Mandiri 51%, AXA 49%) — JV paling sensitif','Taspen Life (Taspen 99,97%)','PertaLife (Dapen Pertamina 71,4%)']},
+             {label:'Isu Kritis',items:['IFG Life: masih menanggung liabilitas polis Jiwasraya','BRI Life: hak suara 44% FWD Group — negosiasi bilateral','BNI Life: persetujuan 40% Sumitomo · spin-off syariah Des 2026','AXA Mandiri: hak veto 49% AXA & isu mis-selling PAYDI','Taspen Life: reputasi rusak pasca korupsi MTN fiktif Rp133 M']}
+           ]}
+        },
+        {id:'es4', label:'Asuransi Jiwa\nSyariah', r:40,
+         fill:'#b8d4e8', stroke:'#80a8c8', strokeW:1.5, textFill:'#1a1a1a', dashed:true,
+         detail:{tag:'END-STATE 4 — TBD',tagColor:'#1a4a6a',tagBg:'#eef6ff',
+           title:'Asuransi Jiwa Syariah',
+           sub:'Status: paling belum jelas — TBD. Sub-Proyek: Dubai · Muscat',
+           sections:[
+             {label:'Opsi Pembentukan',items:['Spin-off unit syariah IFG Life','Merger entitas jiwa syariah BUMN perbankan','Pembentukan entitas baru dari gabungan UUS']},
+             {label:'Isu',items:['Wajib ada sesuai POJK 23/2023','BNI Life: persiapan spin-off UUS sebelum Desember 2026','BRI Life: komponen syariah perlu dipetakan']}
+           ]}
+        },
+        {id:'es5', label:'Penjaminan\nKonvensional', r:46,
+         fill:'#f0d080', stroke:'#c8a030', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 5',tagColor:'#6a4800',tagBg:'#fffae8',
+           title:'Penjaminan Konvensional',
+           sub:'Surviving Entity: Jamkrindo — Sub-Proyek: Milan',
+           sections:[
+             {label:'Entitas yang Masuk',items:['Jamkrindo — Surviving Entity','Askrindo — merger ke Jamkrindo']},
+             {label:'Isu Utama',items:['Jamkrindo: lonjakan klaim KUR pasca-relaksasi Covid & PSAK 117','Askrindo: korupsi PT AMU (2016–2020), kerugian negara Rp604,6 M','Proses paling cepat: sesama IFG, non-TBK, tanpa mitra asing']}
+           ]}
+        },
+        {id:'es6', label:'Penjaminan\nSyariah', r:42,
+         fill:'#d0c8e8', stroke:'#9888c0', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 6',tagColor:'#3a2870',tagBg:'#f0eeff',
+           title:'Penjaminan Syariah',
+           sub:'Surviving Entity: Jamkrindo Syariah — Sub-Proyek: Milan (track syariah)',
+           sections:[
+             {label:'Entitas yang Masuk',items:['Jamkrindo Syariah — Surviving Entity','Askrindo Syariah — merger (market leader KUR Syariah 62,49%)']},
+             {label:'Isu Utama',items:['Askrindo Syariah: sengketa klaim bandara & pembatasan jubir','Jamkrindo Syariah: ketergantungan ekosistem Bank BSI','Brand equity Askrindo Syariah sangat kuat — perlu dijaga']}
+           ]}
+        },
+        {id:'es7', label:'Jasa Raharja\n(UU 33/34)', r:48,
+         fill:'#d0b8a8', stroke:'#a88868', strokeW:2, textFill:'#1a1a1a',
+         detail:{tag:'END-STATE 7 — STANDALONE',tagColor:'#5a3818',tagBg:'#fdf0e8',
+           title:'Jasa Raharja',
+           sub:'Tidak dikonsolidasi — Tetap berdiri sendiri berdasarkan mandat UU 33 & UU 34',
+           sections:[
+             {label:'Status',items:['TIDAK masuk konsolidasi — tetap berdiri sendiri','UU No. 33/1964: santunan kecelakaan penumpang angkutan umum','UU No. 34/1964: santunan kecelakaan lalu lintas jalan','Dana dari iuran wajib STNK & tiket — bukan premi komersial']},
+             {label:'Yang Terdampak',items:['Jasaraharja Putera (JRP) — anak usaha Jasa Raharja (93,8%)','JRP AKAN dimerger ke End-State 1 (Asum Umum Konvensional)']},
+             {label:'Isu Komunikasi',items:['Kebingungan publik: "apakah Jasa Raharja ikut merger?"','Jawaban tegas: TIDAK. Layanan santunan kecelakaan tidak berubah']}
+           ]}
+        },
+        {id:'es8', label:'Entitas\nPenunjang', r:40,
+         fill:'#c0d8c0', stroke:'#80b080', strokeW:1.5, textFill:'#1a1a1a', dashed:true,
+         detail:{tag:'END-STATE 8 — TBD',tagColor:'#1a4a1a',tagBg:'#f0faf0',
+           title:'Entitas Penunjang Asuransi',
+           sub:'Status: paling ambigu — TBD. Sub-Proyek: Salzburg',
+           sections:[
+             {label:'Kandidat yang Masuk',items:['Indonesia Re / Nasional Re (reasuransi)','Bahana Group sebagai Shared Service Center','Grahaniaga Tatautama (manajemen properti)','FitAja! Digital (Mandiri Inhealth 45,1%)','AdMedika (TelkomMetra 99,9%) — TPA terpadu']},
+             {label:'Isu',items:['OJK per Juni 2026 belum terima rencana konsolidasi reasuransi','AdMedika: kepatuhan UU PDP proteksi data medis']}
+           ]}
+        }
+      ]
     },
-    {id:'bau',label:'BAU',sub:'Komunikasi Korporasi',r:54,fill:'#2563eb',textFill:'#fff',stroke:'#1d4ed8',strokeW:2.5,
-     detail:{tag:'KOMUNIKASI KORPORASI',tagColor:'#1d4ed8',tagBg:'#eff6ff',title:'BAU — Business as Usual',sub:'Komunikasi korporasi harian IFG sebagai holding BUMN',sections:[
-       {label:'Tema & Arah 2026',items:['Tema: "Transform Business" (RJPP 2026–2030)','Kampanye: #MelayaniSepenuhHati (mandat Danantara)','Key Message: Transformasi Bisnis untuk Memperkuat Ketahanan Finansial']},
-       {label:'Program Kerja Utama',items:['Media & Agenda Setting (min. 2 rilis/minggu)','Manajemen Isu & Reputasi (early warning aktif)','Content Strategy & Brand Architecture','KIP & PPID · Sponsorship · Event Korporasi']},
-       {label:'KPI 2026 (IFG Internal)',items:['Sentimen positif media ≥ 25%','Publikasi Tier 1-2 ≥ 9.500 berita/tahun','PR Value ≥ Rp 300 miliar/tahun','Brand Equity Index 65–70']}
-     ]},
-     children:[
-       {id:'bau-brand',label:'Brand &\nReputasi',sub:'Transform Business · #MSH',r:32,fill:'#3b82f6',textFill:'#fff',stroke:'#2563eb',strokeW:1.5,
-        detail:{tag:'BAU',tagColor:'#1d4ed8',tagBg:'#eff6ff',title:'Brand & Reputasi Korporasi',sub:'Positioning IFG sebagai holding BUMN terdepan',sections:[
-          {label:'Agenda',items:['Tema 2026: "Transform Business"','Kampanye #MelayaniSepenuhHati (wajib dari Danantara)','IFG Progress — platform thought leadership aktif','Review Brand Architecture & Brand Guideline IFG','Brand "IFG One Building" — konsistensi identitas holding']},
-          {label:'KPI',items:['Brand Equity Index: 65–70 (cukup kuat)','Implementasi kampanye #MSH sesuai arahan Danantara']}
-        ]}
-       },
-       {id:'bau-media',label:'Media &\nPublikasi',sub:'Tier 1-2 · Agenda Setting',r:32,fill:'#3b82f6',textFill:'#fff',stroke:'#2563eb',strokeW:1.5,
-        detail:{tag:'BAU',tagColor:'#1d4ed8',tagBg:'#eff6ff',title:'Media & Publikasi',sub:'Agenda setting dan relasi media aktif',sections:[
-          {label:'Program',items:['Siaran pers minimum 2x per minggu','Media briefing (formal & informal) — triwulanan','Media Visit / Media Gathering — semesteran','Pengembangan relasi strategis redaksi & jurnalis']},
-          {label:'KPI',items:['≥ 9.500 berita positif/tahun di media Tier 1-2','PR Value ≥ Rp 300 miliar/tahun','≥ 10 kegiatan media visit/gathering/tahun','Skor Media Perception Audit ≥ 80']}
-        ]}
-       },
-       {id:'bau-isu',label:'Isu Korporasi',sub:'Jiwasraya · GCG · Siber',r:36,fill:'#dc2626',textFill:'#fff',stroke:'#b91c1c',strokeW:2,
-        detail:{tag:'ISU KORPORASI BAU',tagColor:'#b91c1c',tagBg:'#fef2f2',title:'Isu Aktif — Komunikasi Korporasi BAU',sub:'Isu yang perlu dikelola dalam agenda harian',sections:[
-          {label:'Isu Warisan (Legacy)',items:['Legacy Jiwasraya: likuidasi berjalan, liabilitas IFG Life masih besar','Transparansi pengelolaan investasi pasca-Jiwasraya','Taspen Life: reputasi industri terdampak korupsi MTN fiktif Rp133 M']},
-          {label:'Isu Tata Kelola',items:['GCG & integritas: narasi "IFG sudah berbenah" harus konsisten','Keamanan siber: IFG ditetapkan sebagai Objek Vital Digital (BSSN)','Kebocoran data: risiko reputasi latent yang bisa meledak kapan saja']},
-          {label:'Isu Persaingan',items:['Share of Voice vs Prudential · Allianz · AXA · FWD','Literasi & inklusi asuransi (penetrasi asuransi Indonesia masih rendah)','Positioning BUMN vs asuransi swasta/asing di benak publik']}
-        ]}
-       },
-       {id:'bau-holding',label:'Komunikasi\nHolding',sub:'Anggota Holding · KIP',r:30,fill:'#3b82f6',textFill:'#fff',stroke:'#2563eb',strokeW:1.5,
-        detail:{tag:'BAU',tagColor:'#1d4ed8',tagBg:'#eff6ff',title:'Komunikasi Holding & Anggota',sub:'Koordinasi narasi lintas entitas IFG Group',sections:[
-          {label:'Agenda',items:['Cascading komunikasi holding ke seluruh anggota','Agenda setting bersama holding + anggota holding','KIP & PPID — keterbukaan informasi publik (target skor ≥ 75)','Publikasi kolaborasi rilis anggota holding']}
-        ]}
-       }
-     ]
+
+    // ── BAU
+    {
+      id:'bau', label:'BAU', r:72,
+      fill:'#a8c5e8', stroke:'#7aaad4', strokeW:2.5, textFill:'#1a1a1a',
+      detail:{
+        tag:'KOMUNIKASI KORPORASI', tagColor:'#1a4a8a', tagBg:'#eef4ff',
+        title:'BAU — Business as Usual',
+        sub:'Komunikasi korporasi harian IFG sebagai holding BUMN — Tema 2026: "Transform Business"',
+        sections:[
+          {label:'Tema & Arah 2026', items:['Tema: "Transform Business" (RJPP 2026–2030)','Kampanye: #MelayaniSepenuhHati (mandat Danantara)','Key Message: Transformasi Bisnis untuk Memperkuat Ketahanan Finansial']},
+          {label:'Program Kerja', items:['Media & Agenda Setting (min. 2 rilis/minggu)','Manajemen Isu & Reputasi','Content Strategy & Brand Architecture','KIP & PPID · Sponsorship · Event Korporasi']},
+          {label:'KPI 2026', items:['Sentimen positif media ≥ 25%','Publikasi Tier 1-2 ≥ 9.500 berita/tahun','PR Value ≥ Rp 300 miliar/tahun','Brand Equity Index 65–70']}
+        ]
+      },
+      children:[
+        {id:'bau-brand', label:'Brand &\nReputasi', r:44,
+         fill:'#b8d4f0', stroke:'#80a8d8', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'BAU',tagColor:'#1a4a8a',tagBg:'#eef4ff',
+           title:'Brand & Reputasi Korporasi',
+           sub:'Positioning IFG sebagai holding BUMN terdepan di industri keuangan',
+           sections:[{label:'Agenda',items:['Tema 2026: "Transform Business"','Kampanye #MelayaniSepenuhHati (wajib dari Danantara)','IFG Progress — thought leadership aktif','Review Brand Architecture & Brand Guideline IFG','Brand "IFG One Building" — konsistensi identitas holding']},{label:'KPI',items:['Brand Equity Index: 65–70 (cukup kuat)','Implementasi kampanye #MSH sesuai arahan Danantara']}]}
+        },
+        {id:'bau-media', label:'Media &\nPublikasi', r:44,
+         fill:'#b8d4f0', stroke:'#80a8d8', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'BAU',tagColor:'#1a4a8a',tagBg:'#eef4ff',
+           title:'Media & Publikasi',
+           sub:'Agenda setting aktif dan relasi media yang terstruktur',
+           sections:[{label:'Program',items:['Siaran pers minimum 2x per minggu','Media briefing formal & informal — triwulanan','Media Visit / Media Gathering — semesteran','Pengembangan relasi strategis redaksi & jurnalis']},{label:'KPI',items:['≥ 9.500 berita positif/tahun di media Tier 1-2','PR Value ≥ Rp 300 miliar/tahun','≥ 10 kegiatan media visit/gathering/tahun','Skor Media Perception Audit ≥ 80']}]}
+        },
+        {id:'bau-isu', label:'Isu\nKorporasi', r:48,
+         fill:'#f0b0b0', stroke:'#d07070', strokeW:2, textFill:'#1a1a1a',
+         detail:{tag:'ISU KORPORASI BAU',tagColor:'#8a1a1a',tagBg:'#fff0f0',
+           title:'Isu Aktif — Komunikasi Korporasi BAU',
+           sub:'Isu yang perlu dimonitor dan dikelola dalam agenda komunikasi harian IFG',
+           sections:[
+             {label:'Isu Warisan (Legacy)',items:['Legacy Jiwasraya: likuidasi berjalan, liabilitas IFG Life masih besar','Transparansi pengelolaan investasi pasca-Jiwasraya','Taspen Life: reputasi industri terdampak korupsi MTN fiktif Rp133 M']},
+             {label:'Isu Tata Kelola',items:['GCG & integritas: narasi "IFG sudah berbenah" harus konsisten','Keamanan siber: IFG ditetapkan sebagai Objek Vital Digital (BSSN)','Kebocoran data: risiko reputasi latent']},
+             {label:'Isu Persaingan',items:['Share of Voice vs Prudential · Allianz · AXA · FWD','Literasi & inklusi asuransi (penetrasi Indonesia masih rendah)','Positioning BUMN vs asuransi swasta/asing']}
+           ]}
+        },
+        {id:'bau-holding', label:'Komunikasi\nHolding', r:40,
+         fill:'#b8d4f0', stroke:'#80a8d8', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'BAU',tagColor:'#1a4a8a',tagBg:'#eef4ff',
+           title:'Komunikasi Holding & Anggota',
+           sub:'Koordinasi narasi dan agenda komunikasi lintas seluruh entitas IFG Group',
+           sections:[{label:'Agenda',items:['Cascading komunikasi holding ke seluruh anggota','Agenda setting bersama holding + anggota holding','KIP & PPID — skor keterbukaan informasi publik target ≥ 75','Publikasi kolaborasi rilis anggota holding']}]}
+        }
+      ]
     },
-    {id:'alika',label:'Aksi Alika',sub:'Taktik · KPI · Deliverable',r:54,fill:'#16a34a',textFill:'#fff',stroke:'#15803d',strokeW:2.5,
-     detail:{tag:'PERAN ALIKA',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Aksi & Deliverable Alika Communication',sub:'7 Workstream RKS — Fokus pada Strategi & Engagement',sections:[
-       {label:'Aksi Utama (Workstream 4)',items:['Distribusi rilis ke media formal Tier 1 dan Tier 2','Media briefing & gathering (triwulanan/semesteran)','Engagement KOL organik & berbayar','Social media ranger (amplifikasi & sentimen)','Media intelligence & laporan berkala']},
-       {label:'Aksi Strategis (WS 1,2,5,7)',items:['Early warning & issue intelligence harian','Agenda setting BAU + Astagina','Communication governance framework','Holding statement & crisis playbook','Weekly Strategic Memo (compiled monthly)']},
-       {label:'Posisi Alika',items:['Beroperasi di level IFG Holding — bukan sub-proyek Astagina','Counterpart Tim Cobra untuk alignment narasi holding','Ekstensi strategis — bukan pengganti tim internal']}
-     ]},
-     children:[
-       {id:'aksi-pub',label:'Publikasi\n& Rilis',sub:'Media Tier 1-2 · KPI',r:32,fill:'#22c55e',textFill:'#fff',stroke:'#16a34a',strokeW:1.5,
-        detail:{tag:'AKSI ALIKA — WS4',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Publikasi & Distribusi Rilis',sub:'Deliverable terukur — KPI utama RKS Workstream 4',sections:[
-          {label:'Mekanisme',items:['Distribusi ke media formal Tier 1 & Tier 2','Minimum 2 rilis/minggu (BAU) + rilis ad hoc Astagina','Substansi dari IFG — narasi & framing dari Alika','Review & approval sebelum distribusi']},
-          {label:'Target KPI',items:['≥ 9.500 berita positif/tahun','PR Value ≥ Rp 300 miliar/tahun','Sentimen positif ≥ 25% dari total coverage']}
-        ]}
-       },
-       {id:'aksi-briefing',label:'Media\nBriefing',sub:'Gathering · Kunjungan Redaksi',r:30,fill:'#22c55e',textFill:'#fff',stroke:'#16a34a',strokeW:1.5,
-        detail:{tag:'AKSI ALIKA — WS4',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Media Briefing & Gathering',sub:'Relasi media strategis dan agenda setting',sections:[
-          {label:'Format',items:['Media briefing formal & informal (level jurnalis, redaktur, pemred)','Media Gathering / Media Visit — semesteran','Konferensi pers untuk milestone Astagina & event korporasi']},
-          {label:'Target KPI',items:['≥ 10 kegiatan media visit/gathering/sponsorship per tahun','Database relasi jurnalis & media partner aktif','Skor Media Perception Audit ≥ 80']}
-        ]}
-       },
-       {id:'aksi-kol',label:'Engagement\nKOL',sub:'Organik & Berbayar',r:34,fill:'#22c55e',textFill:'#fff',stroke:'#16a34a',strokeW:1.5,
-        detail:{tag:'AKSI ALIKA — WS4',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Engagement KOL',sub:'Key Opinion Leader — organik dan berbayar',sections:[
-          {label:'Tipe KOL',items:['KOL organik: pengamat yang natural mendukung narasi IFG','KOL berbayar: kampanye terstruktur untuk isu spesifik','Asosiasi industri: AAUI · AAJI · AASI sebagai KOL institusional']},
-          {label:'Fokus Isu KOL',items:['Konsolidasi sebagai penguatan industri (bukan monopoli)','Perlindungan pemegang polis dalam proses merger','Narasi zero-PHK dan fair placement karyawan','Literasi & inklusi asuransi nasional']}
-        ]}
-       },
-       {id:'aksi-ranger',label:'Social Media\nRanger',sub:'Amplifikasi · Sentimen',r:30,fill:'#22c55e',textFill:'#fff',stroke:'#16a34a',strokeW:1.5,
-        detail:{tag:'AKSI ALIKA — WS4',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Social Media Ranger',sub:'Amplifikasi digital dan manajemen sentimen',sections:[
-          {label:'Fungsi',items:['Amplifikasi konten positif IFG di media sosial','Komentar dan/atau like untuk memperkuat narasi','Counter narasi negatif (isu konsolidasi, PHK, dll)']},
-          {label:'Target KPI',items:['Digital reach ≥ 1,7 juta/tahun','Engagement rate media sosial ≥ 5%','Follower growth ≥ 20% YoY','Konten strategis ≥ 35 konten/bulan']}
-        ]}
-       },
-       {id:'aksi-intel',label:'Issue\nIntelligence',sub:'Early Warning · Monitoring',r:34,fill:'#16a34a',textFill:'#fff',stroke:'#15803d',strokeW:2,
-        detail:{tag:'AKSI ALIKA — WS 1+5',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Issue Intelligence & Early Warning',sub:'Monitoring aktif — deteksi sebelum jadi krisis',sections:[
-          {label:'Mekanisme',items:['Media monitoring harian (semua platform)','Laporan media intelligence sesuai perkembangan isu','Early warning system untuk isu sensitif Astagina','Issue tracker & risk monitoring real-time']},
-          {label:'Output Deliverable',items:['Strategic Communication Insight (bulanan)','Laporan Monitoring Issue (reguler & berkala)','Crisis Communication Playbook (per skenario)','Holding Statement Framework (ready to use)']}
-        ]}
-       },
-       {id:'aksi-advisory',label:'Strategic\nAdvisory',sub:'Weekly Memo · Governance',r:30,fill:'#22c55e',textFill:'#fff',stroke:'#16a34a',strokeW:1.5,
-        detail:{tag:'AKSI ALIKA — WS7',tagColor:'#15803d',tagBg:'#f0fdf4',title:'Strategic Advisory & Governance',sub:'Pendampingan manajemen dan tata kelola komunikasi',sections:[
-          {label:'Deliverable',items:['Weekly Strategic Memo (dikompilasi monthly)','Executive Advisory Note','Communication Governance Recommendation']},
-          {label:'Peran',items:['Advisory kepada Departemen Komunikasi & Direksi IFG','Evaluasi implementasi strategi komunikasi secara berkala','Rekomendasi strategis berbasis issue intelligence']}
-        ]}
-       }
-     ]
+
+    // ── AKSI ALIKA
+    {
+      id:'alika', label:'Aksi Alika', r:72,
+      fill:'#d4c5a9', stroke:'#b8a07a', strokeW:2.5, textFill:'#1a1a1a',
+      detail:{
+        tag:'PERAN ALIKA', tagColor:'#5a3a10', tagBg:'#fdf5e8',
+        title:'Aksi & Deliverable Alika Communication',
+        sub:'7 Workstream RKS — Fokus pada Strategi, Engagement, dan Issue Intelligence',
+        sections:[
+          {label:'Aksi Utama (Workstream 4)', items:['Distribusi rilis ke media formal Tier 1 dan Tier 2','Media briefing & gathering','Engagement KOL organik & berbayar','Social media ranger (amplifikasi & sentimen)','Media intelligence & laporan berkala']},
+          {label:'Aksi Strategis (WS 1,2,5,7)', items:['Early warning & issue intelligence harian','Agenda setting BAU + Astagina','Communication governance framework','Holding statement & crisis playbook','Weekly Strategic Memo (compiled monthly)']},
+          {label:'Posisi Alika', items:['Beroperasi di level IFG Holding — bukan sub-proyek Astagina','Counterpart Tim Cobra untuk alignment narasi holding','Ekstensi strategis — bukan pengganti tim internal']}
+        ]
+      },
+      children:[
+        {id:'aksi-pub', label:'Publikasi\n& Rilis', r:44,
+         fill:'#e0d0b0', stroke:'#c0a870', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS4',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Publikasi & Distribusi Rilis',
+           sub:'Deliverable terukur — KPI utama RKS Workstream 4 untuk BAU dan Astagina',
+           sections:[{label:'Mekanisme',items:['Distribusi ke media formal Tier 1 & Tier 2','Minimum 2 rilis/minggu (BAU) + rilis ad hoc Astagina','Substansi dari IFG — narasi & framing dari Alika','Review & approval sebelum distribusi']},{label:'Target KPI',items:['≥ 9.500 berita positif/tahun','PR Value ≥ Rp 300 miliar/tahun','Sentimen positif ≥ 25% dari total coverage']}]}
+        },
+        {id:'aksi-briefing', label:'Media\nBriefing', r:42,
+         fill:'#e0d0b0', stroke:'#c0a870', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS4',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Media Briefing & Gathering',
+           sub:'Relasi media strategis dan agenda setting melalui engagement langsung',
+           sections:[{label:'Format',items:['Media briefing formal & informal (level jurnalis, redaktur, pemred)','Media Gathering / Media Visit — semesteran','Konferensi pers untuk milestone Astagina & event korporasi']},{label:'Target KPI',items:['≥ 10 kegiatan media visit/gathering/sponsorship per tahun','Database relasi jurnalis & media partner aktif','Skor Media Perception Audit ≥ 80']}]}
+        },
+        {id:'aksi-kol', label:'Engagement\nKOL', r:46,
+         fill:'#e0d0b0', stroke:'#c0a870', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS4',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Engagement KOL',
+           sub:'Key Opinion Leader — organik dan berbayar untuk kedua agenda BAU & Astagina',
+           sections:[{label:'Tipe KOL',items:['KOL organik: pengamat yang natural mendukung narasi IFG','KOL berbayar: kampanye terstruktur untuk isu spesifik','Asosiasi industri: AAUI · AAJI · AASI sebagai KOL institusional']},{label:'Fokus Isu',items:['Konsolidasi sebagai penguatan industri (bukan monopoli)','Perlindungan pemegang polis dalam proses merger','Narasi zero-PHK dan fair placement karyawan','Literasi & inklusi asuransi nasional']}]}
+        },
+        {id:'aksi-ranger', label:'Social Media\nRanger', r:42,
+         fill:'#e0d0b0', stroke:'#c0a870', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS4',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Social Media Ranger',
+           sub:'Amplifikasi digital dan manajemen sentimen publik secara terorganisir',
+           sections:[{label:'Fungsi',items:['Amplifikasi konten positif IFG di media sosial','Komentar dan/atau like untuk memperkuat narasi','Counter narasi negatif (isu konsolidasi, PHK, dll)']},{label:'Target KPI',items:['Digital reach ≥ 1,7 juta/tahun','Engagement rate media sosial ≥ 5%','Follower growth ≥ 20% YoY','Konten strategis ≥ 35 konten/bulan']}]}
+        },
+        {id:'aksi-intel', label:'Issue\nIntelligence', r:48,
+         fill:'#c8b490', stroke:'#a07848', strokeW:2, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS 1+5',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Issue Intelligence & Early Warning',
+           sub:'Monitoring aktif harian — mendeteksi sinyal isu sebelum berkembang menjadi krisis',
+           sections:[{label:'Mekanisme',items:['Media monitoring harian (semua platform)','Laporan media intelligence sesuai perkembangan isu','Early warning system untuk isu sensitif Astagina','Issue tracker & risk monitoring real-time']},{label:'Output',items:['Strategic Communication Insight (bulanan)','Laporan Monitoring Issue (reguler & berkala)','Crisis Communication Playbook (per skenario)','Holding Statement Framework (ready to use)']}]}
+        },
+        {id:'aksi-advisory', label:'Strategic\nAdvisory', r:42,
+         fill:'#e0d0b0', stroke:'#c0a870', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'AKSI ALIKA — WS7',tagColor:'#5a3a10',tagBg:'#fdf5e8',
+           title:'Strategic Advisory & Governance',
+           sub:'Pendampingan manajemen IFG dan tata kelola komunikasi perusahaan',
+           sections:[{label:'Deliverable',items:['Weekly Strategic Memo (dikompilasi monthly)','Executive Advisory Note','Communication Governance Recommendation']},{label:'Peran',items:['Advisory kepada Departemen Komunikasi & Direksi IFG','Evaluasi implementasi strategi komunikasi secara berkala','Rekomendasi strategis berbasis issue intelligence']}]}
+        }
+      ]
     },
-    {id:'stakeholder',label:'Pemangku\nKepentingan',sub:'35 Stakeholder',r:50,fill:'#7c3aed',textFill:'#fff',stroke:'#6d28d9',strokeW:2,
-     detail:{tag:'STAKEHOLDER',tagColor:'#6d28d9',tagBg:'#f5f3ff',title:'Peta Pemangku Kepentingan',sub:'35 stakeholder dalam 4 kuadran kekuasaan-kepentingan',sections:[
-       {label:'Kuadran 1 — Aktor Kunci',items:['Danantara · OJK · DPR (Komisi VI & XI)','BP BUMN · LPS · KPPU · Kemenkeu · Kemenko Perekonomian','Kejaksaan Agung · BPK · BPKP']},
-       {label:'Kuadran 2 — Aktor Strategis',items:['Kemhuk · Setkab · Kemensetneg · KPK · Polri · BI · TNI AD']},
-       {label:'Kuadran 3 — Mitra Industri',items:['AAUI · AAJI · AASI · AFTECH · PAI · BSSN · Kemkomdigi']},
-       {label:'Stakeholder Khusus Astagina',items:['Karyawan & Serikat Pekerja entitas terkonsolidasi','Mitra asing: AXA · FWD · Sumitomo','Nasabah pemegang polis — termasuk eks-Jiwasraya','Media Tier 1-2 desk keuangan/BUMN','KOL industri & pengamat asuransi']}
-     ]},
-     children:[
-       {id:'sth-reg',label:'Regulator',sub:'OJK · LPS · KPPU',r:32,fill:'#8b5cf6',textFill:'#fff',stroke:'#7c3aed',strokeW:1.5,
-        detail:{tag:'STAKEHOLDER',tagColor:'#6d28d9',tagBg:'#f5f3ff',title:'Regulator',sub:'Kuadran 1 — Power Tinggi, Interest Tinggi',sections:[
-          {label:'Aktor Kunci',items:['OJK: pengawas langsung, persetujuan setiap konsolidasi wajib','LPS: Program Penjaminan Polis — narasi perlindungan nasabah','KPPU: risiko anti-kompetitif pasca-merger — narasi proaktif penting','Kemenkeu: pemberi PMN, monitor penyelesaian Jiwasraya','BPK & BPKP: audit rutin — narasi akuntabilitas harus kuat']},
-          {label:'Pendekatan Komunikasi',items:['Executive briefing rutin per milestone proyek konsolidasi','Policy paper dan position paper untuk OJK & Kemenkeu','Proaktif sampaikan perkembangan sebelum media menyampaikan duluan']}
-        ]}
-       },
-       {id:'sth-gov',label:'Pemerintah\n& DPR',sub:'Danantara · BP BUMN · Komisi VI',r:32,fill:'#8b5cf6',textFill:'#fff',stroke:'#7c3aed',strokeW:1.5,
-        detail:{tag:'STAKEHOLDER',tagColor:'#6d28d9',tagBg:'#f5f3ff',title:'Pemerintah & DPR',sub:'Kuadran 1 & 2',sections:[
-          {label:'Aktor',items:['DPR Komisi VI & XI: pengawas BUMN dan keuangan','BP BUMN: koordinasi kebijakan BUMN','Kemenko Perekonomian: kebijakan sektor keuangan','Kejaksaan Agung: tindak lanjut kasus korupsi entitas']},
-          {label:'Risiko',items:['DPR: potensi hearing soal Jiwasraya & konsolidasi yang belum tuntas','Kejaksaan: kasus Askrindo (PT AMU) & Jasindo (SKK Migas) masih sensitif']}
-        ]}
-       },
-       {id:'sth-media',label:'Media &\nPublik',sub:'Tier 1-2 · KOL · Nasabah',r:32,fill:'#8b5cf6',textFill:'#fff',stroke:'#7c3aed',strokeW:1.5,
-        detail:{tag:'STAKEHOLDER',tagColor:'#6d28d9',tagBg:'#f5f3ff',title:'Media, Publik & Nasabah',sub:'Gatekeeper narasi dan penerima dampak langsung',sections:[
-          {label:'Media Tier 1',items:['Kompas · Bisnis Indonesia · CNBC Indonesia · Kontan · Tempo','Detik Finance · Katadata · CNN Indonesia · Antara','Desk keuangan/BUMN perlu dikelola proaktif, bukan reaktif']},
-          {label:'KOL Industri',items:['Irvan Rahardjo — pengamat asuransi (sudah skeptis, perlu engagement)','Toto Pranoto · Tauhid Ahmad (INDEF) — pengamat BUMN','Adiwarman Karim — pengamat syariah']},
-          {label:'Nasabah',items:['Eks-pemegang polis Jiwasraya — kelompok paling sensitif','Nasabah aktif entitas yang dikonsolidasi — khawatir keberlangsungan polis','Pesan kunci: semua polis, hak, dan kewajiban tetap berlaku']}
-        ]}
-       },
-       {id:'sth-internal',label:'Internal &\nKaryawan',sub:'Entitas · Serikat · SDM',r:30,fill:'#8b5cf6',textFill:'#fff',stroke:'#7c3aed',strokeW:1.5,
-        detail:{tag:'STAKEHOLDER',tagColor:'#6d28d9',tagBg:'#f5f3ff',title:'Internal & Karyawan',sub:'Stakeholder paling sensitif dalam konsolidasi',sections:[
-          {label:'Kelompok',items:['Karyawan entitas yang dikonsolidasi (ribuan orang)','Serikat pekerja lintas entitas','Manajemen & Direksi anggota holding']},
-          {label:'Isu Utama',items:['Job security: "apakah pekerjaan saya aman?"','Budaya perusahaan: integrasi budaya lintas entitas','Prinsip: No One Left Behind & fair placement']},
-          {label:'Pendekatan',items:['People Change Management Framework','Manager Communication Toolkit (FAQ & talking points)','Employee Listening Mechanism','FAQ internal yang komprehensif']}
-        ]}
-       },
-       {id:'sth-mitra',label:'Mitra\nAsing',sub:'AXA · FWD · Sumitomo',r:34,fill:'#0891b2',textFill:'#fff',stroke:'#0e7490',strokeW:1.5,
-        detail:{tag:'STAKEHOLDER KHUSUS',tagColor:'#0e7490',tagBg:'#ecfeff',title:'Mitra Asing',sub:'Pemegang saham asing di entitas yang dikonsolidasi',sections:[
-          {label:'Tiga Mitra Utama',items:['AXA (Perancis): 49% di Mandiri AXA General Insurance','FWD Group (Hong Kong): 44% di BRI Life','Sumitomo Life (Jepang): 40% di BNI Life']},
-          {label:'Komplikasi Hukum',items:['AXA: hak veto 49% — butuh negosiasi bilateral yang panjang','FWD: majority di FWD Life Indonesia (bukan BUMN, mekanisme berbeda)','Sumitomo: persetujuan 40% untuk RUPSLB BNI Life']},
-          {label:'Posisi Resmi IFG',items:['IFG menghormati dan mengakui peran strategis mitra asing','Konsolidasi tidak berarti pengambilalihan sepihak','Semangat kemitraan, bukan dominasi']}
-        ]}
-       }
-     ]
+
+    // ── STAKEHOLDERS
+    {
+      id:'stakeholder', label:'Stakeholders', r:70,
+      fill:'#a8d5b5', stroke:'#7db898', strokeW:2, textFill:'#1a1a1a',
+      detail:{
+        tag:'STAKEHOLDERS', tagColor:'#1a5a30', tagBg:'#f0faf3',
+        title:'Peta Stakeholders IFG',
+        sub:'35 stakeholder terpetakan dalam 4 kuadran kekuasaan-kepentingan',
+        sections:[
+          {label:'Kuadran 1 — Aktor Kunci', items:['Danantara · OJK · DPR (Komisi VI & XI)','BP BUMN · LPS · KPPU · Kemenkeu · Kemenko Perekonomian','Kejaksaan Agung · BPK · BPKP']},
+          {label:'Kuadran 2 — Aktor Strategis', items:['Kemhuk · Setkab · Kemensetneg · KPK · Polri · BI · TNI AD']},
+          {label:'Kuadran 3 — Mitra Industri', items:['AAUI · AAJI · AASI · AFTECH · PAI · BSSN · Kemkomdigi']},
+          {label:'Stakeholder Khusus Astagina', items:['Karyawan & Serikat Pekerja entitas terkonsolidasi','Mitra asing: AXA · FWD · Sumitomo','Nasabah pemegang polis — termasuk eks-Jiwasraya','Media Tier 1-2 desk keuangan/BUMN','KOL industri & pengamat asuransi']}
+        ]
+      },
+      children:[
+        {id:'sth-reg', label:'Regulator', r:44,
+         fill:'#b8e0c5', stroke:'#80c095', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'STAKEHOLDERS',tagColor:'#1a5a30',tagBg:'#f0faf3',
+           title:'Regulator',
+           sub:'Kuadran 1 — Power Tinggi, Interest Tinggi: OJK · LPS · KPPU · Kemenkeu · BPK · BPKP',
+           sections:[{label:'Aktor Kunci',items:['OJK: pengawas langsung, persetujuan setiap konsolidasi wajib','LPS: Program Penjaminan Polis — narasi perlindungan nasabah','KPPU: risiko anti-kompetitif pasca-merger','Kemenkeu: pemberi PMN, monitor penyelesaian Jiwasraya','BPK & BPKP: audit rutin — narasi akuntabilitas harus kuat']},{label:'Pendekatan',items:['Executive briefing rutin per milestone proyek','Policy paper dan position paper untuk OJK & Kemenkeu','Proaktif sampaikan perkembangan sebelum media duluan']}]}
+        },
+        {id:'sth-gov', label:'Pemerintah\n& DPR', r:44,
+         fill:'#b8e0c5', stroke:'#80c095', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'STAKEHOLDERS',tagColor:'#1a5a30',tagBg:'#f0faf3',
+           title:'Pemerintah & DPR',
+           sub:'Kuadran 1 & 2: DPR Komisi VI & XI · BP BUMN · Kemenko Perekonomian · Kejaksaan Agung',
+           sections:[{label:'Aktor',items:['DPR Komisi VI & XI: pengawas BUMN dan keuangan','BP BUMN: koordinasi kebijakan BUMN','Kemenko Perekonomian: kebijakan sektor keuangan','Kejaksaan Agung: tindak lanjut kasus korupsi entitas']},{label:'Risiko',items:['DPR: potensi hearing soal Jiwasraya & konsolidasi yang belum tuntas','Kejaksaan: kasus Askrindo (PT AMU) & Jasindo (SKK Migas) masih sensitif']}]}
+        },
+        {id:'sth-media', label:'Media &\nPublik', r:44,
+         fill:'#b8e0c5', stroke:'#80c095', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'STAKEHOLDERS',tagColor:'#1a5a30',tagBg:'#f0faf3',
+           title:'Media, Publik & Nasabah',
+           sub:'Gatekeeper narasi publik dan penerima dampak langsung konsolidasi',
+           sections:[{label:'Media Tier 1',items:['Kompas · Bisnis Indonesia · CNBC Indonesia · Kontan · Tempo','Detik Finance · Katadata · CNN Indonesia · Antara','Desk keuangan/BUMN perlu dikelola proaktif, bukan reaktif']},{label:'KOL Industri',items:['Irvan Rahardjo — pengamat asuransi (skeptis, perlu engagement)','Toto Pranoto · Tauhid Ahmad (INDEF) — pengamat BUMN','Adiwarman Karim — pengamat syariah']},{label:'Nasabah',items:['Eks-pemegang polis Jiwasraya — kelompok paling sensitif','Nasabah aktif entitas yang dikonsolidasi','Pesan kunci: semua polis, hak, dan kewajiban tetap berlaku']}]}
+        },
+        {id:'sth-internal', label:'Internal &\nKaryawan', r:42,
+         fill:'#b8e0c5', stroke:'#80c095', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'STAKEHOLDERS',tagColor:'#1a5a30',tagBg:'#f0faf3',
+           title:'Internal & Karyawan',
+           sub:'Stakeholder paling sensitif dalam proses konsolidasi Astagina',
+           sections:[{label:'Kelompok',items:['Karyawan entitas yang dikonsolidasi (ribuan orang)','Serikat pekerja lintas entitas','Manajemen & Direksi anggota holding']},{label:'Isu Utama',items:['Job security: "apakah pekerjaan saya aman?"','Budaya perusahaan: integrasi budaya lintas entitas','Prinsip: No One Left Behind & fair placement']},{label:'Pendekatan',items:['People Change Management Framework','Manager Communication Toolkit (FAQ & talking points)','Employee Listening Mechanism']}]}
+        },
+        {id:'sth-mitra', label:'Mitra\nAsing', r:46,
+         fill:'#a0c8d8', stroke:'#60a0b8', strokeW:1.5, textFill:'#1a1a1a',
+         detail:{tag:'STAKEHOLDER KHUSUS',tagColor:'#0a4a5a',tagBg:'#ecf7ff',
+           title:'Mitra Asing',
+           sub:'Pemegang saham asing di tiga entitas yang akan dikonsolidasi — AXA · FWD · Sumitomo',
+           sections:[{label:'Tiga Mitra Utama',items:['AXA (Perancis): 49% di Mandiri AXA General Insurance','FWD Group (Hong Kong): 44% di BRI Life','Sumitomo Life (Jepang): 40% di BNI Life']},{label:'Komplikasi Hukum',items:['AXA: hak veto 49% — butuh negosiasi bilateral yang panjang','FWD: majority di FWD Life Indonesia (bukan BUMN, mekanisme berbeda)','Sumitomo: persetujuan 40% untuk RUPSLB BNI Life']},{label:'Posisi Resmi IFG',items:['IFG menghormati dan mengakui peran strategis mitra asing','Konsolidasi tidak berarti pengambilalihan sepihak','Semangat kemitraan, bukan dominasi']}]}
+        }
+      ]
     }
   ]
 };
 
-// ═══════════════════════════════════════════════════════════════
-// LAYOUT ENGINE
-// ═══════════════════════════════════════════════════════════════
-const CX = 1100, CY = 900;
+// ═══════════════════════════════════════════════════════════
+// LAYOUT
+// ═══════════════════════════════════════════════════════════
+const CX = 1100, CY = 1050;
 
-const L1_ANGLES = {
-  danantara: -88, astagina: 28, bau: 152, alika: 272, stakeholder: 210
+// Danantara far top-right, clear of all others
+const L1_CFG = {
+  danantara:  { angle: -58, dist: 420 },  // far top-right, clear of Aksi Alika
+  astagina:   { angle:  22, dist: 350 },
+  bau:        { angle: 158, dist: 335 },
+  alika:      { angle: 270, dist: 330 },  // straight up
+  stakeholder:{ angle: 205, dist: 315 }
 };
-const L1_DIST = {
-  danantara: 220, astagina: 290, bau: 268, alika: 268, stakeholder: 250
-};
 
-function toRad(deg) { return deg * Math.PI / 180; }
+function rad(d){ return d * Math.PI / 180; }
 
-function placeL1() {
-  TREE.children.forEach(c => {
-    const a = toRad(L1_ANGLES[c.id]);
-    const d = L1_DIST[c.id];
-    c.x = CX + Math.cos(a) * d;
-    c.y = CY + Math.sin(a) * d;
-  });
-}
+TREE.x = CX; TREE.y = CY;
+TREE.children.forEach(c => {
+  const cfg = L1_CFG[c.id];
+  c.x = CX + Math.cos(rad(cfg.angle)) * cfg.dist;
+  c.y = CY + Math.sin(rad(cfg.angle)) * cfg.dist;
+});
 
-function placeL2(parent, children) {
-  if (!children || !children.length) return;
-  // angle pointing away from IFG center
+function placeL2(parent) {
+  const ch = parent.children;
+  if (!ch || !ch.length) return;
   const baseAngle = Math.atan2(parent.y - CY, parent.x - CX) * 180 / Math.PI;
-  const spread = Math.min(140, children.length * 32);
-  const step = spread / Math.max(children.length - 1, 1);
-  const start = baseAngle - spread / 2;
-  const dist = parent.r + 60 + (children.length > 5 ? 130 : 115);
-  children.forEach((c, i) => {
-    const a = toRad(children.length === 1 ? baseAngle : start + i * step);
+  const spread = Math.min(148, 28 * ch.length);
+  const step = spread / Math.max(ch.length - 1, 1);
+  const dist = parent.r + 55 + (ch.length > 5 ? 148 : 128);
+  ch.forEach((c, i) => {
+    const a = rad(ch.length === 1 ? baseAngle : baseAngle - spread/2 + i * step);
     c.x = parent.x + Math.cos(a) * dist;
     c.y = parent.y + Math.sin(a) * dist;
   });
 }
+TREE.children.forEach(c => { if(c.children) placeL2(c); });
 
-placeL1();
-TREE.children.forEach(c => { if (c.children) placeL2(c, c.children); });
-
-// ═══════════════════════════════════════════════════════════════
-// RENDER ENGINE
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════
 const nodesLayer = document.getElementById('nodes-layer');
 const edgesLayer = document.getElementById('edges-layer');
-const expandedSet = new Set();
-const edgeRegistry = {};
-const nodeRegistry = {};
+const expanded = new Set();
+const edgeReg = {};
+const nodeReg = {};
 
 function svgEl(tag, attrs) {
   const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
-  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k,v));
   return el;
 }
 
 function buildNode(d) {
   const g = svgEl('g', { class:'bubble', 'data-id': d.id });
 
-  const circ = svgEl('circle', {
+  g.appendChild(svgEl('circle', {
     cx: d.x, cy: d.y, r: d.r,
-    fill: d.fill,
-    stroke: d.stroke || '#fff',
+    fill: d.fill, stroke: d.stroke || '#bbb',
     'stroke-width': d.strokeW || 1.5,
-    'stroke-dasharray': d.dashed ? '5 3' : 'none'
-  });
-  g.appendChild(circ);
+    'stroke-dasharray': d.dashed ? '6 4' : 'none'
+  }));
 
+  // Label only — no sub-label in bubble
   const lines = d.label.split('\n');
-  const fsize = d.r >= 52 ? 14 : d.r >= 38 ? 12 : d.r >= 30 ? 10.5 : 9.5;
-  const lh = fsize + 3;
+  const isXL  = d.r >= 75;
+  const isLG  = d.r >= 55;
+  const isMD  = d.r >= 42;
+  const fsize = isXL ? 20 : isLG ? 16 : isMD ? 13 : 11;
+  const fw    = isXL ? '800' : isLG ? '700' : '600';
+  const lh    = fsize + 5;
   const totalH = lines.length * lh;
-  const hasSub = d.sub && d.r >= 34;
-  const offsetY = hasSub ? -(lh * 0.4) : 0;
+  const startY = d.y - totalH / 2 + lh / 2;
 
   lines.forEach((line, i) => {
     const t = svgEl('text', {
-      x: d.x,
-      y: d.y - totalH / 2 + lh / 2 + i * lh + offsetY,
-      'text-anchor': 'middle',
-      'dominant-baseline': 'central',
-      fill: d.textFill || '#fff',
-      'font-size': fsize,
-      'font-weight': d.r >= 50 ? '700' : '600',
+      x: d.x, y: startY + i * lh,
+      'text-anchor': 'middle', 'dominant-baseline': 'central',
+      fill: d.textFill || '#1a1a1a',
+      'font-size': fsize, 'font-weight': fw,
       'font-family': "'Inter', system-ui, sans-serif"
     });
     t.textContent = line;
     g.appendChild(t);
   });
 
-  if (hasSub) {
-    const maxLen = Math.floor(d.r * 1.8 / 6);
-    let subTxt = d.sub.length > maxLen ? d.sub.slice(0, maxLen - 1) + '…' : d.sub;
-    const st = svgEl('text', {
-      x: d.x,
-      y: d.y + totalH / 2 - lh / 2 + offsetY + lh + 2,
-      'text-anchor': 'middle',
-      'dominant-baseline': 'central',
-      fill: d.textFill || '#fff',
-      opacity: '0.6',
-      'font-size': Math.max(8, fsize - 2.5),
-      'font-family': "'Inter', system-ui, sans-serif"
-    });
-    st.textContent = subTxt;
-    g.appendChild(st);
-  }
-
+  // Expand dot — top-right corner
   if (d.children && d.children.length) {
     const px = d.x + d.r * 0.68, py = d.y - d.r * 0.68;
-    const dot = svgEl('circle', { cx: px, cy: py, r: 6, fill: '#fff', opacity: '0.85', class: 'expdot' });
+    g.appendChild(svgEl('circle', { cx:px, cy:py, r:8, fill:'rgba(255,255,255,0.92)', class:'expdot' }));
     const plus = svgEl('text', {
-      x: px, y: py,
-      'text-anchor': 'middle', 'dominant-baseline': 'central',
-      fill: d.fill, 'font-size': '9', 'font-weight': '800',
-      'font-family': "'Inter', system-ui, sans-serif",
-      class: 'expdot'
+      x:px, y:py, 'text-anchor':'middle', 'dominant-baseline':'central',
+      fill:'#333', 'font-size':'11', 'font-weight':'800',
+      'font-family':"'Inter', system-ui, sans-serif", class:'expdot'
     });
     plus.textContent = '+';
-    g.appendChild(dot);
     g.appendChild(plus);
   }
 
@@ -462,87 +561,81 @@ function buildNode(d) {
   return g;
 }
 
-function buildEdge(x1, y1, x2, y2, color, dashed) {
+function buildEdge(x1,y1,x2,y2,color,dashed) {
   return svgEl('line', {
-    x1, y1, x2, y2,
-    stroke: color, 'stroke-width': '1.8',
-    opacity: '0.38',
-    'stroke-dasharray': dashed ? '6 4' : 'none'
+    x1,y1,x2,y2, stroke:color,
+    'stroke-width':'2', opacity:'0.35',
+    'stroke-dasharray': dashed ? '7 5' : 'none'
   });
 }
 
 function mountNode(d, animate) {
   const el = buildNode(d);
   nodesLayer.appendChild(el);
-  nodeRegistry[d.id] = { el, data: d };
+  nodeReg[d.id] = { el, data: d };
   if (animate) {
     const c = el.querySelector('circle');
-    const finalR = d.r;
-    c.setAttribute('r', '0');
+    const fr = d.r;
+    c.setAttribute('r','0');
     requestAnimationFrame(() => {
-      c.style.transition = 'r .38s cubic-bezier(.34,1.56,.64,1)';
-      c.setAttribute('r', finalR);
+      c.style.transition = 'r .4s cubic-bezier(.34,1.56,.64,1)';
+      c.setAttribute('r', fr);
     });
   }
 }
 
-function mountEdge(x1, y1, x2, y2, color, dashed, key) {
-  const el = buildEdge(x1, y1, x2, y2, color, dashed);
+function mountEdge(x1,y1,x2,y2,color,dashed,key) {
+  const el = buildEdge(x1,y1,x2,y2,color,dashed);
   edgesLayer.appendChild(el);
-  edgeRegistry[key] = el;
+  edgeReg[key] = el;
 }
 
 function onNodeClick(d) {
   showPanel(d);
   if (!d.children || !d.children.length) return;
-  if (expandedSet.has(d.id)) {
-    collapseChildren(d);
-  } else {
-    expandChildren(d);
-  }
+  if (expanded.has(d.id)) collapseNode(d);
+  else expandNode(d);
 }
 
-function expandChildren(d) {
-  expandedSet.add(d.id);
+function expandNode(d) {
+  expanded.add(d.id);
   d.children.forEach(c => {
-    mountEdge(d.x, d.y, c.x, c.y, d.fill, c.dashed, 'e-' + c.id);
-    mountNode(c, true);
+    mountEdge(d.x,d.y,c.x,c.y,d.fill,c.dashed,'e-'+c.id);
+    mountNode(c,true);
   });
-  flipDot(d, true);
+  flipDot(d,true);
 }
 
-function collapseChildren(d) {
-  expandedSet.delete(d.id);
+function collapseNode(d) {
+  expanded.delete(d.id);
   d.children.forEach(c => {
-    if (c.children && expandedSet.has(c.id)) collapseChildren(c);
-    if (edgeRegistry['e-' + c.id]) { edgeRegistry['e-' + c.id].remove(); delete edgeRegistry['e-' + c.id]; }
-    if (nodeRegistry[c.id]) { nodeRegistry[c.id].el.remove(); delete nodeRegistry[c.id]; }
+    if (c.children && expanded.has(c.id)) collapseNode(c);
+    if (edgeReg['e-'+c.id]) { edgeReg['e-'+c.id].remove(); delete edgeReg['e-'+c.id]; }
+    if (nodeReg[c.id]) { nodeReg[c.id].el.remove(); delete nodeReg[c.id]; }
   });
-  flipDot(d, false);
+  flipDot(d,false);
 }
 
-function flipDot(d, open) {
-  const nr = nodeRegistry[d.id];
-  if (!nr) return;
-  const plus = nr.el.querySelector('.expdot[text]') || nr.el.querySelector('text.expdot');
-  if (plus) plus.textContent = open ? '−' : '+';
+function flipDot(d,open) {
+  const nr = nodeReg[d.id]; if(!nr) return;
+  const plus = nr.el.querySelector('text.expdot');
+  if(plus) plus.textContent = open ? '−' : '+';
 }
 
-// Init L1
 function initRender() {
   TREE.x = CX; TREE.y = CY;
-  mountNode(TREE, false);
+  mountNode(TREE,false);
   TREE.children.forEach(c => {
-    mountEdge(CX, CY, c.x, c.y, c.fill, c.dashed, 'l1-' + c.id);
-    mountNode(c, false);
+    mountEdge(CX,CY,c.x,c.y,c.fill,c.dashed,'l1-'+c.id);
+    mountNode(c,false);
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
-// DETAIL PANEL
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// PANEL
+// ═══════════════════════════════════════════════════════════
 function showPanel(d) {
-  if (!d.detail) return;
+  if(!d.detail) return;
   const det = d.detail;
   let html = `<span class="p-tag" style="color:${det.tagColor};background:${det.tagBg}">${det.tag}</span>
     <div class="p-title">${det.title}</div>
@@ -554,52 +647,34 @@ function showPanel(d) {
   document.getElementById('panel-body').innerHTML = html;
   document.getElementById('panel').classList.add('open');
 }
-
 function closePanel() { document.getElementById('panel').classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
 // PAN & ZOOM
-// ═══════════════════════════════════════════════════════════════
-let scale = 1, tx = 0, ty = 0, dragging = false, lx = 0, ly = 0;
-const vp = document.getElementById('viewport');
-
-function applyT() { vp.setAttribute('transform', `translate(${tx},${ty}) scale(${scale})`); }
-
-function doZoom(f, cx, cy) {
-  cx = cx ?? window.innerWidth / 2; cy = cy ?? window.innerHeight / 2;
-  const ns = Math.max(0.15, Math.min(4, scale * f));
-  tx = cx - (cx - tx) * (ns / scale);
-  ty = cy - (cy - ty) * (ns / scale);
-  scale = ns; applyT();
+// ═══════════════════════════════════════════════════════════
+let scale=1,tx=0,ty=0,dragging=false,lx=0,ly=0;
+const vp=document.getElementById('viewport');
+function applyT(){vp.setAttribute('transform',`translate(${tx},${ty}) scale(${scale})`);}
+function doZoom(f,cx,cy){
+  cx=cx??window.innerWidth/2; cy=cy??window.innerHeight/2;
+  const ns=Math.max(0.12,Math.min(4,scale*f));
+  tx=cx-(cx-tx)*(ns/scale); ty=cy-(cy-ty)*(ns/scale);
+  scale=ns; applyT();
 }
-
-function resetView() {
-  scale = 0.52;
-  tx = window.innerWidth / 2 - CX * scale;
-  ty = window.innerHeight / 2 - CY * scale;
+function resetView(){
+  scale=0.46;
+  tx=window.innerWidth/2-CX*scale;
+  ty=window.innerHeight/2-CY*scale;
   applyT();
 }
-
-const cv = document.getElementById('canvas');
-cv.addEventListener('mousedown', e => { if (e.target.closest('.bubble')) return; dragging = true; lx = e.clientX; ly = e.clientY; cv.classList.add('dragging'); });
-window.addEventListener('mousemove', e => { if (!dragging) return; tx += e.clientX - lx; ty += e.clientY - ly; lx = e.clientX; ly = e.clientY; applyT(); });
-window.addEventListener('mouseup', () => { dragging = false; cv.classList.remove('dragging'); });
-cv.addEventListener('wheel', e => { e.preventDefault(); doZoom(e.deltaY < 0 ? 1.09 : 0.91, e.clientX, e.clientY); }, { passive: false });
-
-let t0 = 0;
-cv.addEventListener('touchstart', e => {
-  if (e.touches.length === 1) { lx = e.touches[0].clientX; ly = e.touches[0].clientY; }
-  if (e.touches.length === 2) t0 = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-}, { passive: true });
-cv.addEventListener('touchmove', e => {
-  e.preventDefault();
-  if (e.touches.length === 1) { tx += e.touches[0].clientX - lx; ty += e.touches[0].clientY - ly; lx = e.touches[0].clientX; ly = e.touches[0].clientY; applyT(); }
-  if (e.touches.length === 2) {
-    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-    doZoom(d / t0, (e.touches[0].clientX + e.touches[1].clientX) / 2, (e.touches[0].clientY + e.touches[1].clientY) / 2);
-    t0 = d;
-  }
-}, { passive: false });
+const cv=document.getElementById('canvas');
+cv.addEventListener('mousedown',e=>{if(e.target.closest('.bubble'))return;dragging=true;lx=e.clientX;ly=e.clientY;cv.classList.add('dragging');});
+window.addEventListener('mousemove',e=>{if(!dragging)return;tx+=e.clientX-lx;ty+=e.clientY-ly;lx=e.clientX;ly=e.clientY;applyT();});
+window.addEventListener('mouseup',()=>{dragging=false;cv.classList.remove('dragging');});
+cv.addEventListener('wheel',e=>{e.preventDefault();doZoom(e.deltaY<0?1.09:0.91,e.clientX,e.clientY);},{passive:false});
+let t0=0;
+cv.addEventListener('touchstart',e=>{if(e.touches.length===1){lx=e.touches[0].clientX;ly=e.touches[0].clientY;}if(e.touches.length===2)t0=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);},{passive:true});
+cv.addEventListener('touchmove',e=>{e.preventDefault();if(e.touches.length===1){tx+=e.touches[0].clientX-lx;ty+=e.touches[0].clientY-ly;lx=e.touches[0].clientX;ly=e.touches[0].clientY;applyT();}if(e.touches.length===2){const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);doZoom(d/t0,(e.touches[0].clientX+e.touches[1].clientX)/2,(e.touches[0].clientY+e.touches[1].clientY)/2);t0=d;}},{passive:false});
 
 initRender();
 resetView();
